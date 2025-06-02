@@ -25,7 +25,7 @@
         <td>{{ paciente.cpf }}</td>
         <td>{{ paciente.dataNascimento | date:'dd-MM-yyyy' }}</td>
         <td>{{ paciente.numeroCarteirinha }}</td>
-        <td>{{ paciente.validadeCarteirinha }}</td>
+        <td>{{ formatarValidadeCarteirinha(paciente.validadeCarteirinha) }}</td>
         <td>
           <button type="button" class="btn btn-sm btn-outline-info" (click)="ExibirFormularioAtualizacao(paciente.pacienteId)">
             Atualizar</button
@@ -68,7 +68,7 @@
 
         <div class="form-group">
           <label for="cpf">CPF</label>
-          <input id="cpf" type="text" class="form-control" formControlName="cpf">
+          <input id="cpf" type="text" class="form-control" formControlName="cpf" appCpfMask >
           <div *ngIf="formulario.get('cpf')?.errors?.['required'] && campoInvalido('cpf')" class="text-danger">
             O CPF é obrigatório.
           </div>

@@ -118,11 +118,22 @@ export class PacientesComponent implements OnInit {
       ativo: new FormControl(resultado.ativo)
     });
 
+    if(resultado.ativo == false)
+    {
+      this.formulario.disable();
+    }
+
     this.visibilidadeTabela = false;
     this.visibilidadeFormulario = true;
   });
 }
 
+formatarValidadeCarteirinha(valor: string): string {
+  if (valor && valor.length === 6) {
+    return valor.substring(0, 2) + '/' + valor.substring(2);
+  }
+  return valor;
+}
 
 mascararRG(event: any): void {
   let valor = event.target.value;
