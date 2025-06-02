@@ -1,0 +1,239 @@
+<div class="container p-5" *ngIf="visibilidadeTabela">
+  <div class="border boder-light rounded p-5">
+    <div>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="ExibirFormularioCadastro()">
+        Novo Paciente
+      </button>
+    </div>
+
+    <hr />
+
+    <table class="table table-striped table-hover table-sm">
+      <tr class="thead-light">
+        <th>Nome</th>
+        <th>Sobrenome</th>
+        <th>CPF</th>
+        <th>Data de Nascimento</th>  
+        <th>Nro. da Carteirinha</th>       
+        <th>Val. da Carteirinha</th>
+        <th>Ações</th>
+      </tr>
+
+      <tr *ngFor="let paciente of pacientes">
+        <td>{{ paciente.nome }}</td>
+        <td>{{ paciente.sobreNome }}</td>
+        <td>{{ paciente.cpf }}</td>
+        <td>{{ paciente.dataNascimento | date:'dd-MM-yyyy' }}</td>
+        <td>{{ paciente.numeroCarteirinha }}</td>
+        <td>{{ paciente.validadeCarteirinha }}</td>
+        <td>
+          <button type="button" class="btn btn-sm btn-outline-info" (click)="ExibirFormularioAtualizacao(paciente.pacienteId)">
+            Atualizar</button
+          >
+          <button
+            (click)="toggleStatus(paciente)"
+            [ngClass]="paciente.ativo ? 'btn-ativo' : 'btn-inativo'"
+          >
+            {{ paciente.ativo ? 'Inativar' : 'Ativar' }}
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="container p-5" *ngIf="visibilidadeFormulario">
+  <div class="row">
+    <div class="col-6 border boder-light rounded p-5 shadow" *ngIf="formulario">
+      <h6>{{ tituloFormulario }}</h6>
+      <hr />
+
+      <form [formGroup]="formulario" (ngSubmit)="EnviarFormulario()">
+
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input id="nome" type="text" class="form-control" formControlName="nome">
+          <div *ngIf="campoInvalido('nome')" class="text-danger">
+            O nome é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="sobreNome">Sobrenome</label>
+          <input id="sobreNome" type="text" class="form-control" formControlName="sobreNome">
+          <div *ngIf="campoInvalido('sobreNome')" class="text-danger">
+            O sobrenome é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cpf">CPF</label>
+          <input id="cpf" type="text" class="form-control" formControlName="cpf">
+          <div *ngIf="formulario.get('cpf')?.errors?.['required'] && campoInvalido('cpf')" class="text-danger">
+            O CPF é obrigatório.
+          </div>
+          <div *ngIf="formulario.get('cpf')?.errors?.['cpfInvalido'] && campoInvalido('cpf')" class="text-danger">
+            CPF inválido.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dataNascimento">Data de Nascimento</label>
+          <input id="dataNascimento" type="date" class="form-control" formControlName="dataNascimento">
+          <div *ngIf="campoInvalido('dataNascimento')" class="text-danger">
+            A data de nascimento é obrigatória.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="genero">Gênero</label>
+          <select id="genero" class="form-control" formControlName="genero">
+            <option value="">Selecione</option>
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+            <option value="O">Outro</option>
+          </select>
+          <div *ngIf="campoInvalido('genero')" class="text-danger">
+            O gênero é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rg">RG</label>
+          <input id="rg" 
+                type="text" 
+                class="form-control" 
+                formControlName="rg"
+                (input)="mascararRG($event)">
+          <div *ngIf="campoInvalido('rg')" class="text-danger">
+            O RG é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ufrg">UF RG</label>
+          <select id="ufrg" class="form-control" formControlName="ufrg">
+            <option value="">Selecione</option>
+            <option value="AC">AC</option>
+            <option value="AL">AL</option>
+            <option value="AP">AP</option>
+            <option value="AM">AM</option>
+            <option value="BA">BA</option>
+            <option value="CE">CE</option>
+            <option value="DF">DF</option>
+            <option value="ES">ES</option>
+            <option value="GO">GO</option>
+            <option value="MA">MA</option>
+            <option value="MT">MT</option>
+            <option value="MS">MS</option>
+            <option value="MG">MG</option>
+            <option value="PA">PA</option>
+            <option value="PB">PB</option>
+            <option value="PR">PR</option>
+            <option value="PE">PE</option>
+            <option value="PI">PI</option>
+            <option value="RJ">RJ</option>
+            <option value="RN">RN</option>
+            <option value="RS">RS</option>
+            <option value="RO">RO</option>
+            <option value="RR">RR</option>
+            <option value="SC">SC</option>
+            <option value="SP">SP</option>
+            <option value="SE">SE</option>
+            <option value="TO">TO</option>
+          </select>
+          <div *ngIf="campoInvalido('ufrg')" class="text-danger">
+            O UF do RG é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" class="form-control" formControlName="email" />
+          <div *ngIf="campoInvalido('email')" class="text-danger">
+            Email inválido ou obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="celular">Celular</label>
+          <input id="celular" 
+                type="text" 
+                class="form-control" 
+                formControlName="celular"
+                (input)="mascararCelular($event)">
+          <div *ngIf="campoInvalido('celular')" class="text-danger">
+            O celular é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="telefoneFixo">Telefone Fixo</label>
+          <input id="telefoneFixo" type="text" class="form-control" formControlName="telefoneFixo">
+        </div>
+
+        <div class="form-group">
+          <label for="numeroCarteirinha">Número da Carteirinha</label>
+          <input id="numeroCarteirinha" type="text" class="form-control" formControlName="numeroCarteirinha">
+          <div *ngIf="campoInvalido('numeroCarteirinha')" class="text-danger">
+            O número da carteirinha é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="validadeCarteirinha">Validade da Carteirinha</label>
+          <input id="validadeCarteirinha" 
+                type="text" 
+                class="form-control" 
+                formControlName="validadeCarteirinha"
+                (input)="mascararValidade($event)">
+          <div *ngIf="campoInvalido('validadeCarteirinha')" class="text-danger">
+            A validade da carteirinha é obrigatória.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="convenioId">Convênio</label>
+          <select id="convenioId" class="form-control" formControlName="convenioId">
+            <option value="">Selecione</option>
+            <option *ngFor="let conv of convenio" [value]="conv.convenioId">
+              {{ conv.nomeConvenio }}</option>
+          </select>
+          <div *ngIf="campoInvalido('convenioId')" class="text-danger">
+            O convênio é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-check">
+          <input id="ativo" type="checkbox" class="form-check-input" formControlName="ativo">
+          <label for="ativo" class="form-check-label">Ativo</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3" [disabled]="formulario.invalid">
+          Salvar
+        </button>
+
+        <button type="button" class="btn btn-secondary mt-3 ml-2" (click)="Voltar()">
+          Cancelar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<ng-template #conteudoModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Confirmação de Exclusão</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Prosseguir com a exclusão do(a) {{nomePaciente}}
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modalRef.hide()">Não</button>
+        <button type="button" class="btn btn-outline-danger" (click)="ExcluirPaciente(pacienteId)">Sim</button>
+    </div>
+  </ng-template>
